@@ -10,16 +10,24 @@ const dataBase=[
                    {"id": "0009", "name" : "Diet Dr Pepper", "price": 11},
                    {"id": "0010", "name" : "Fanta", "price": 12}
                ]
-function printReceipt(barcodes){
+/*function printReceipt(barcodes){
     if(!isBarcodesValid(barcodes))
     return "[ERROR]"
     else{
 
     return renderReceipt(settleReceipt(barcodes))
     }
+}*/
+let printReceipt=(barcodes)=>{
+    if(!isBarcodesValid(barcodes))
+        return "[ERROR]"
+    else{
+
+        return renderReceipt(settleReceipt(barcodes))
+    }
 }
 
-function isBarcodesValid(barcodes){
+/*function isBarcodesValid(barcodes){
     let allId=loadAllId()
     if(barcodes.length==0)
         return false
@@ -33,9 +41,31 @@ function isBarcodesValid(barcodes){
         if(i==barcodes.length-1)
         return true
     }
+}*/
+let isBarcodesValid=(barcodes)=>{
+    let allId=loadAllId()
+    if(barcodes.length==0)
+        return false
+    for(let i=0;i<barcodes.length;i++){
+        for(let j=0;j<allId.length;j++){
+            if(barcodes[i]==allId[j])
+                break;
+            if(j==allId.length-1)
+                return false
+        }
+        if(i==barcodes.length-1)
+            return true
+    }
 }
 
-function loadAllId(){
+/*function loadAllId(){
+    let allId=[]
+    for(let i=0;i<dataBase.length;i++){
+        allId.push(dataBase[i].id)
+    }
+    return allId
+}*/
+let loadAllId=()=>{
     let allId=[]
     for(let i=0;i<dataBase.length;i++){
         allId.push(dataBase[i].id)
@@ -45,7 +75,7 @@ function loadAllId(){
 
 
 
-function getCommodityList(barcodes){
+/*function getCommodityList(barcodes){
     let commodityList=[]
 
     for(let i=0;i<barcodes.length;i++){
@@ -62,9 +92,35 @@ function getCommodityList(barcodes){
     }
 
     return commodityList
+}*/
+let getCommodityList=(barcodes)=>{
+    let commodityList=[]
+
+    for(let i=0;i<barcodes.length;i++){
+        if(i==0)commodityList.push(getOneCommodityInfo(barcodes[i]))
+        for(let j=0;j<commodityList.length;j++){
+            if(barcodes[i]==commodityList[j].id&&commodityList[j].id){
+                commodityList[j].num++
+                break
+            }else{
+                if(j==commodityList.length-1)
+                    commodityList.push(getOneCommodityInfo(barcodes[i]))
+            }
+        }
+    }
+
+    return commodityList
 }
 
-function settleReceipt(barcodes){
+/*function settleReceipt(barcodes){
+    let receipt={}
+    receipt.commodity=getCommodityList(barcodes)
+    let sum=getCommoditySum(receipt.commodity)
+    receipt.sum=sum
+    console.log(receipt)
+    return receipt
+}*/
+let settleReceipt=(barcodes)=>{
     let receipt={}
     receipt.commodity=getCommodityList(barcodes)
     let sum=getCommoditySum(receipt.commodity)
@@ -73,7 +129,20 @@ function settleReceipt(barcodes){
     return receipt
 }
 
-function getOneCommodityInfo(barcode){
+/*function getOneCommodityInfo(barcode){
+    let commodityInfo={}
+    for(let i=0;i<dataBase.length;i++){
+        if(barcode==dataBase[i].id){
+            let res=dataBase[i]
+            commodityInfo.id=res.id
+            commodityInfo.name=res.name
+            commodityInfo.price=res.price
+            commodityInfo.num=0
+            return commodityInfo
+        }
+    }
+}*/
+let getOneCommodityInfo=(barcode)=>{
     let commodityInfo={}
     for(let i=0;i<dataBase.length;i++){
         if(barcode==dataBase[i].id){
@@ -87,7 +156,14 @@ function getOneCommodityInfo(barcode){
     }
 }
 
-function getCommoditySum(commodityList){
+/*function getCommoditySum(commodityList){
+    let sum=0
+    for(let i=0;i<commodityList.length;i++){
+        sum+=commodityList[i].price*commodityList[i].num
+    }
+    return sum
+}*/
+let getCommoditySum=(commodityList)=>{
     let sum=0
     for(let i=0;i<commodityList.length;i++){
         sum+=commodityList[i].price*commodityList[i].num
@@ -95,7 +171,7 @@ function getCommoditySum(commodityList){
     return sum
 }
 
-function renderReceipt(receipt){
+/*function renderReceipt(receipt){
     let receiptString=
 `Receipts
 ------------------------------------------------------------
@@ -110,8 +186,23 @@ function renderReceipt(receipt){
 Price: ${receipt.sum}`
 
     return receiptString
-}
+}*/
+let renderReceipt=(receipt)=>{
+    let receiptString=
+        `Receipts
+------------------------------------------------------------
+`
+    for(let i=0;i<receipt.commodity.length;i++){
+        receiptString+=
+            `${receipt.commodity[i].name} ${receipt.commodity[i].price} ${receipt.commodity[i].num}
+`
+    }
+    receiptString+=
+        `------------------------------------------------------------
+Price: ${receipt.sum}`
 
+    return receiptString
+}
 
 module.exports = {
     printReceipt,
