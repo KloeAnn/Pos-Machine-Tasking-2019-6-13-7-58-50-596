@@ -11,7 +11,7 @@ const dataBase=[
                    {"id": "0010", "name" : "Fanta", "price": 12}
                ]
 function printReceipt(barcodes){
-    if(isBarcodesValid(barcodes))
+    if(!isBarcodesValid(barcodes))
     return "[ERROR]"
     else{
 
@@ -21,11 +21,13 @@ function printReceipt(barcodes){
 
 function isBarcodesValid(barcodes){
     let allId=loadAllId()
+    if(barcodes.length==0)
+        return false
     for(let i=0;i<barcodes.length;i++){
         for(let j=0;j<allId.length;j++){
             if(barcodes[i]==allId[j])
             break;
-            if(j==barcodes.length-1)
+            if(j==allId.length-1)
             return false
         }
         if(i==barcodes.length-1)
@@ -41,13 +43,7 @@ function loadAllId(){
     return allId
 }
 
-function settleReceipt(barcodes){
-    let receipt={}
-    receipt.commodity=getCommodityList(barcodes)
-    let sum=getCommoditySum(getCommodityList(barcodes))
-    receipt.sum=sum
-    return receipt
-}
+
 
 function getCommodityList(barcodes){
     let commodityList=[]
@@ -55,7 +51,7 @@ function getCommodityList(barcodes){
     for(let i=0;i<barcodes.length;i++){
         if(i==0)commodityList.push(getOneCommodityInfo(barcodes[i]))
         for(let j=0;j<commodityList.length;j++){
-            if(barcodes[i]==commodityList[j].id){
+            if(barcodes[i]==commodityList[j].id&&commodityList[j].id){
                 commodityList[j].num++
                 break
             }else{
@@ -66,6 +62,15 @@ function getCommodityList(barcodes){
     }
 
     return commodityList
+}
+
+function settleReceipt(barcodes){
+    let receipt={}
+    receipt.commodity=getCommodityList(barcodes)
+    let sum=getCommoditySum(receipt.commodity)
+    receipt.sum=sum
+    console.log(receipt)
+    return receipt
 }
 
 function getOneCommodityInfo(barcode){
@@ -106,6 +111,7 @@ Price: ${receipt.sum}`
 
     return receiptString
 }
+
 
 module.exports = {
     printReceipt,
